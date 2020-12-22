@@ -28,8 +28,7 @@ UC Berkeley Statistic 154 (Modern Statistical Prediction and Machine Learning) S
  ```
 
 ## Motivation
-According to the paper, the ability to detect clouds in polar regions can help scientifics gain an understanding about our changing global climate, where the presence of water vapor leads to increasing temperature and carbon dioxide concentration in the atmosphere. By employing MISR (multi-angle imaging spectroradiometer) imagery for distinguishing between surface pixels and cloudy pixels, we gather the data from nine angles, five forward viewing angles, which we will analyze here. We will build several machine learning classification models to determine the best classifier for future unseen image pixels.
-
+According to the paper, the ability to detect clouds in polar regions can aid scientists and reserachers gain an understanding about our changing global climate, where the presence of water vapor is leading to increasing temperature and carbon dioxide concentration in the atmosphere. The cloudy surface being similar on the surface to the cloudy/icy surfaces is making the research difficult. From the MISR (multi-angle imaging spectroradiometer) data collection, we gain information from nine angles (with five forward angles in the data), which we will analyze here through visualizations and building several machine learning classification models to determine the best classifier for future unseen image pixels.
 
 ## Part 1: Data Collection and Exploration
 In this project, we will be taking a look at three datasets, "image1.txt", "image2.txt", and "image3.txt", containing information collected by a cloud detection algorithm.
@@ -46,15 +45,8 @@ In this project, we will be taking a look at three datasets, "image1.txt", "imag
 * ``radiance angle AF``: raw radiance angle #4 (26.1 degrees)
 * ``radiance angle AN``: raw radiance angle #5 (0 degrees/nadir)
 
-To calculate the percent of pixels for the different classes, we divide the number of rows with each expert label by the total number of rows and multiply that by 100. All maps and plots for exploratory data analysis done in this part are generated using the R package ggplot2.
-
-#### Plots
-![map1](https://github.com/janiceji/cloud-detection/blob/main/plots/labels_image1.png)
-![map2](https://github.com/janiceji/cloud-detection/blob/main/plots/labels_image2.png)
-![map3](https://github.com/janiceji/cloud-detection/blob/main/plots/labels_image3.png)
-
 ## Part 2: Preparation 
-The expert labels with 0 are taken out because they contain no information. We test two ways to split the data to account for 
+The expert labels with 0 are taken out because they contain no information. We test two ways to split the data
 The first splitting method involves dividing up the data into 20 blocks to account for dependencies and non-iid among the different images, selecting 70% for training and the other 30% for validation and testing. (Method A).
 The second splitting method is to simply split it by image number, where image 1 is the training, image 2 is the validation, and image 3 is the test. (Method B)
 
@@ -65,8 +57,7 @@ We chose some classification methods and created a function that allows the user
 After assessing the fit using cross validation, we apply the CVGeneric function on training sets A and B, rename the expert labels to 0 (non-cloudy) and 1 (cloudy), then proceed to model and predict accordingly.
 
 #### ROC Curves
-![roc1](https://github.com/janiceji/cloud-detection/blob/main/plots/roc.png)
-![roc2](https://github.com/janiceji/cloud-detection/blob/main/plots/roc2.png)
+![roc1](https://github.com/janiceji/cloud-detection/blob/main/plots/roc.png) ![roc2](https://github.com/janiceji/cloud-detection/blob/main/plots/roc2.png)
 
 ## Part 4: Diagnostics
 Analyzed the proposed best model and examine the misclassification errors.
