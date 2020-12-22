@@ -28,7 +28,7 @@ UC Berkeley Statistic 154 (Modern Statistical Prediction and Machine Learning) S
  ```
 
 ## Motivation
-According to the paper, the ability to detect clouds in polar regions can help scientifics gain an understanding about our changing global climate, where the presence of water vapor leads to increasing temperature and carbon dioxide concentration in the atmosphere. By employing MISR (multi-angle imaging spectroradiometer) imagery for distinguishing between surface pixels and cloudy pixels, we gather the data from 9 angles, 5 forward viewing angles which we will observe here.
+According to the paper, the ability to detect clouds in polar regions can help scientifics gain an understanding about our changing global climate, where the presence of water vapor leads to increasing temperature and carbon dioxide concentration in the atmosphere. By employing MISR (multi-angle imaging spectroradiometer) imagery for distinguishing between surface pixels and cloudy pixels, we gather the data from nine angles, five forward viewing angles, which we will analyze here. We will build several machine learning classification models to determine the best classifier for future unseen image pixels.
 
 
 ## Part 1: Data Collection and Exploration
@@ -46,7 +46,7 @@ In this project, we will be taking a look at three datasets, "image1.txt", "imag
 * ``radiance angle AF``: raw radiance angle #4 (26.1 degrees)
 * ``radiance angle AN``: raw radiance angle #5 (0 degrees/nadir)
 
-To calculate the percent of pixels for the different classes, we divide the number of rows with each expert label by the total number of rows and multiplying that by 100 to get the percentage. All maps and plots for exploratory data analysis done in part 1 are generated using the R package ggplot2.
+To calculate the percent of pixels for the different classes, we divide the number of rows with each expert label by the total number of rows and multiply that by 100. All maps and plots for exploratory data analysis done in this part are generated using the R package ggplot2.
 
 #### Plots
 ![map1](https://github.com/janiceji/cloud-detection/blob/main/plots/labels_image1.png)
@@ -73,3 +73,12 @@ Analyzed the proposed best model and examine the misclassification errors.
 
 #### Conclusion
 QDA was deemed the best classifier among the ones selected for unseen image pixels.
+
+## R Packages Used
+- ggplot2
+- corrplot
+- caret
+- MASS
+- class
+- ROCR
+- gridExtra
