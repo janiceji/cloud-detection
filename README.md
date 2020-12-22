@@ -5,7 +5,7 @@
 UC Berkeley Statistic 154 (Modern Statistical Prediction and Machine Learning) Spring 2019 Project 2. Based on the paper [Daytime Arctic Cloud Detection Based on Multi-Angle Satellite Data with Case Studies by Yu et al. (2008)](https://github.com/janiceji/cloud-detection/blob/main/yu2008.pdf). The write-up was done by Janice Ji and YiNung Huang.
 
 ## Report Table of Contents
-
+```
 1 Data Collection and Exploration
   a. Data Summary
   b. Maps
@@ -25,6 +25,7 @@ UC Berkeley Statistic 154 (Modern Statistical Prediction and Machine Learning) S
   c. Better model?
   d. Other splitting methods
   e. Conclusion
+ ```
 
 ## Motivation
 According to the paper, the ability to detect clouds in polar regions can help scientifics gain an understanding about our changing global climate, where the presence of water vapor leads to increasing temperature and carbon dioxide concentration in the atmosphere. By employing MISR (multi-angle imaging spectroradiometer) imagery for distinguishing between surface pixels and cloudy pixels, we gather the data from 9 angles, 5 forward viewing angles which we will observe here.
