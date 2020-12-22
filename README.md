@@ -57,7 +57,7 @@ We chose some classification methods and created a function that allows the user
 After assessing the fit using cross validation, we apply the CVGeneric function on training sets A and B, rename the expert labels to 0 (non-cloudy) and 1 (cloudy), then proceed to model and predict accordingly.
 
 #### ROC Curves
-![roc1](https://github.com/janiceji/cloud-detection/blob/main/plots/roc.png) ![roc2](https://github.com/janiceji/cloud-detection/blob/main/plots/roc2.png)
+![roc1](https://github.com/janiceji/cloud-detection/blob/main/plots/roc.png)
 
 ## Part 4: Diagnostics
 Analyzed the proposed best model and examine the misclassification errors.
