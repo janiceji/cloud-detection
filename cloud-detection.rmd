@@ -1,0 +1,1025 @@
+---
+title: "Project 2"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+---
+
+```{r}
+library(ggplot2)
+library(corrplot)
+library(caret)
+library(MASS)
+library(class)
+library(ROCR)
+library(gridExtra)
+```
+
+## (1)
+### (b)
+
+```{r}
+names = c("y", "x", "expert_label", "NDAI", "SD", "CORR", "DF", "CF", "BF", "AF", "AN")
+img1 = read.table("image_data/image1.txt", col.names = names)
+img2 = read.table("image_data/image2.txt", col.names = names)
+img3 = read.table("image_data/image3.txt", col.names = names)
+```
+
+
+```{r}
+# for image 1
+img1$expert_label = factor(img1$expert_label)
+nrow(img1[img1$expert_label == -1, ]) / nrow(img1) * 100
+nrow(img1[img1$expert_label == 0, ]) / nrow(img1) * 100
+nrow(img1[img1$expert_label == 1, ]) / nrow(img1) * 100
+
+# for image 2
+img2$expert_label = factor(img2$expert_label)
+nrow(img2[img2$expert_label == -1, ]) / nrow(img2) * 100
+nrow(img2[img2$expert_label == 0, ]) / nrow(img2) * 100
+nrow(img2[img2$expert_label == 1, ]) / nrow(img2) * 100
+
+# for image 3
+img3$expert_label = factor(img3$expert_label)
+nrow(img3[img3$expert_label == -1, ]) / nrow(img3) * 100
+nrow(img3[img3$expert_label == 0, ]) / nrow(img3) * 100
+nrow(img3[img3$expert_label == 1, ]) / nrow(img3) * 100
+```
+
+
+```{r}
+ggplot(aes(x = x, y = y, color = expert_label), data = img1) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for Image 1
+[expert label: +1 = cloud, -1 = not cloud, 0 = unlabeled]")
+
+ggplot(aes(x = x, y = y, color = expert_label), data = img2) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for Image 2
+[expert label: +1 = cloud, -1 = not cloud, 0 = unlabeled]")
+
+ggplot(aes(x = x, y = y, color = expert_label), data = img3) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for Image 3
+[expert label: +1 = cloud, -1 = not cloud, 0 = unlabeled]")
+```
+
+### (c)
+
+#### (i)
+
+```{r}
+ggplot(aes(x = SD, y = CORR), data = img1) +
+  geom_point(size = 0.2) +
+  ggtitle("CORR vs. SD for Image 1")
+
+ggplot(aes(x = SD, y = CORR), data = img2) +
+  geom_point(size = 0.2) +
+  ggtitle("CORR vs. SD for Image 2")
+
+ggplot(aes(x = SD, y = CORR), data = img3) +
+  geom_point(size = 0.2) +
+  ggtitle("CORR vs. SD for Image 3")
+```
+
+```{r}
+ggplot(aes(x = NDAI, y = CORR), data = img1) +
+  geom_point(size = 0.2) +
+  ggtitle("CORR vs. NDAI for Image 1")
+
+ggplot(aes(x = NDAI, y = CORR), data = img2) +
+  geom_point(size = 0.2) +
+  ggtitle("CORR vs. NDAI for Image 2")
+
+ggplot(aes(x = NDAI, y = CORR), data = img3) +
+  geom_point(size = 0.2) +
+  ggtitle("CORR vs. NDAI for Image 3")
+```
+
+
+```{r}
+ggplot(aes(x = NDAI, y = SD), data = img1) +
+  geom_point(size = 0.2) +
+  ggtitle("SD vs. NDAI for Image 1")
+
+ggplot(aes(x = NDAI, y = SD), data = img2) +
+  geom_point(size = 0.2) +
+  ggtitle("SD vs. NDAI for Image 2")
+
+ggplot(aes(x = NDAI, y = SD), data = img3) +
+  geom_point(size = 0.2) +
+  ggtitle("SD vs. NDAI for Image 3")
+```
+
+#### (ii)
+
+```{r}
+ggplot(aes(x = expert_label, y = CORR), data = img1) +
+  geom_boxplot() +
+  ggtitle("CORR vs. expert_label for Image 1")
+
+ggplot(aes(x = expert_label, y = CORR), data = img2) +
+  geom_boxplot() +
+  ggtitle("CORR vs. expert_label for Image 2")
+
+ggplot(aes(x = expert_label, y = CORR), data = img3) +
+  geom_boxplot() +
+  ggtitle("CORR vs. expert_label for Image 3")
+```
+
+```{r}
+ggplot(aes(x = expert_label, y = DF), data = img1) +
+  geom_boxplot() +
+  ggtitle("DF vs. expert_label for Image 1")
+
+ggplot(aes(x = expert_label, y = DF), data = img2) +
+  geom_boxplot() +
+  ggtitle("DF vs. expert_label for Image 2")
+
+ggplot(aes(x = expert_label, y = DF), data = img3) +
+  geom_boxplot() +
+  ggtitle("DF vs. expert_label for Image 3")
+```
+
+```{r}
+ggplot(aes(x = expert_label, y = AN), data = img1) +
+  geom_boxplot() +
+  ggtitle("AN vs. expert_label for Image 1")
+
+ggplot(aes(x = expert_label, y = AN), data = img2) +
+  geom_boxplot() +
+  ggtitle("AN vs. expert_label for Image 2")
+
+ggplot(aes(x = expert_label, y = AN), data = img3) +
+  geom_boxplot() +
+  ggtitle("AN vs. expert_label for Image 3")
+```
+
+## 2.
+### (a)
+
+```{r}
+# first exclude the unlabeled data in our trained model
+img1 = img1[img1$expert_label != 0, ]
+img2 = img2[img2$expert_label != 0, ]
+img3 = img3[img3$expert_label != 0, ]
+img1$expert_label = factor(img1$expert_label)
+img2$expert_label = factor(img2$expert_label)
+img3$expert_label = factor(img3$expert_label)
+```
+
+
+```{r}
+summary(img1)
+```
+
+
+```{r}
+# METHOD A (dealing with spatial dependency)
+
+# divide the entire area into 20 blocks (5 * 4), and randomly select 70% blocks for training set, 15% blocks for validation set, 15% blocks for test set.
+set.seed(123256)
+num_blocks = 20
+blocks = 1:num_blocks
+train_block = sample(blocks, size = num_blocks * 0.7)
+exclude_train_blocks = blocks[-train_block]
+valid_block = sample(exclude_train_blocks, size = num_blocks * 0.15)
+test_block = blocks[-c(train_block, valid_block)]
+
+# width (x) for each block
+w = (369 - 65) / 4
+# length (y) for each block
+l = (383 - 2) / 5
+
+```
+
+```{r}
+# write split function for creating validation and test set indices
+split = function(img, block_type) {
+  ind_list = vector("list", length(block_type))
+  for (i in 1:length(block_type)) {
+    b = block_type[i]
+    x_ind = (b - 1) %% 4 + 1 #x index
+    y_ind = (b - 1) %/% 4 + 1 #y index
+    block_x_ind = 65 + w * (x_ind - 1) <= img$x & img$x < 65 + w * x_ind 
+    block_y_ind = 2 + l * (y_ind - 1) <= img$y & img$y < 2 + l * y_ind
+    if (x_ind == 4) { 
+      block_x_ind = 65 + w * (x_ind - 1) <= img$x & img$x <= 65 + w * x_ind
+    }
+    if (y_ind == 5) {
+      block_y_ind = 2 + l * (y_ind - 1) <= img$y & img$y <= 2 + l * y_ind
+    }
+    ind_list[[i]] = block_x_ind & block_y_ind
+  }
+  return(ind_list[[1]] | ind_list[[2]] | ind_list[[3]])
+}
+
+valid1 = img1[split(img1, valid_block), ]
+test1 = img1[split(img1, test_block), ]
+train1 = img1[!(split(img1, valid_block) | split(img1, test_block)), ]
+
+valid2 = img2[split(img2, valid_block), ]
+test2 = img2[split(img2, test_block), ]
+train2 = img2[!(split(img2, valid_block) | split(img2, test_block)), ]
+
+valid3 = img3[split(img3, valid_block), ]
+test3 = img3[split(img3, test_block), ]
+train3 = img3[!(split(img3, valid_block) | split(img3, test_block)), ]
+
+# combine train, validation, test sets in the three images
+valA = rbind(valid1, valid2, valid3)
+testA = rbind(test1, test2, test3)
+trainA = rbind(train1, train2, train3)
+
+valid1
+```
+
+```{r}
+# METHOD B (dealing with temporal dependency)
+
+# take image 1 as training, image 2 as validation, image 3 as test set
+trainB = img1
+valB = img2
+testB = img3
+```
+
+### (b)
+
+Report the accuracy of a trivial classifer which sets all labels to -1 (cloud-free) on the validation set and on the test set. In what scenarios will such a classifier have high average accuracy?
+
+```{r}
+# METHOD A
+val_acc = mean(valA$expert_label == -1)
+paste0(c("Validation accuracy is about ", round(val_acc*100, 2), "%"), collapse = "")
+test_acc = mean(testA$expert_label == -1)
+paste0(c("Test accuracy is about ", round(test_acc*100, 2), "%"), collapse = "")
+
+# METHOD B
+val_acc = mean(valB$expert_label == -1)
+paste0(c("Validation accuracy is about ", round(val_acc*100, 2), "%"), collapse = "")
+test_acc = mean(testB$expert_label == -1)
+paste0(c("Test accuracy is about ", round(test_acc*100, 2), "%"), collapse = "")
+```
+
+Such classifier will have high average accuracy only if most data actually have expert labels -1 (cloud-free).
+
+### (c)
+
+Assuming the expert labels as the truth, and without using fancy classification methods, suggest three of the best features, using quantitative and visual justification. Define your best feature criteria clearly. Only the relevant plots are necessary. Be sure to give this careful consideration, as it relates to subsequent problems.
+
+```{r}
+for (i in 4:11) {
+  feature = names[i]
+  print(ggplot(aes(x = expert_label, y = trainA[,feature]), data = trainA) +
+  geom_boxplot() +
+    ylab(feature) +
+  ggtitle(paste0(feature, " vs. expert_label for training set")))
+  # ggsave(paste0(i, "plot.png"))
+}
+```
+
+```{r}
+
+trainA_copy = data.frame(trainA)
+trainA_copy$expert_label = as.numeric(as.character(trainA_copy$expert_label))
+trainA_copy$expert_label[trainA_copy$expert_label == -1] = 0
+# png(filename="corr.png")
+corrplot(cor(trainA_copy[,3:11]))
+```
+
+Based on the above two plots, we choose NDAI, CORR, AN.
+
+### (d)
+
+```{r eval=FALSE}
+# This chunk commented out for convenient purpose (time complexity)
+# # First: Choose the parameter k for knn using cross validation
+# CVtrainA = rbind(trainA, valA)
+# levels(CVtrainA$expert_label) <- c(0, 1)
+# feature_names = colnames(CVtrainA)[4:11]
+# CVtrainA_features = CVtrainA[,c("expert_label", feature_names)]
+# 
+# # create 5 folds
+# set.seed(1234)
+# folds <- createFolds(CVtrainA$expert_label, k = 5)
+# 
+# # Overall KNN classification accuracies for different choice of K
+# choices_of_K = c(11, 21, 31, 41, 51, 61)
+# overallAcc = rep(NA, length(choices_of_K))
+# 
+# for (c in 1:length(choices_of_K)) {
+#   k = choices_of_K[c]
+#   cvAcc = rep(NA, 5)
+# 
+#   for (i in 1:5) {
+#     fold_ind = folds[[i]]
+#     traindat = CVtrainA_features[-fold_ind,]
+#     traindat_actual = CVtrainA_features$expert_label[-fold_ind]
+#     valdat = CVtrainA_features[fold_ind,]
+#     valdat_actual = CVtrainA_features$expert_label[fold_ind]
+# 
+#     pred_class = knn(train = traindat[,feature_names], test = valdat[,feature_names], cl = traindat_actual, k = k)
+#     val_acc = mean(valdat_actual == pred_class)
+#     cvAcc[i] = val_acc
+#   }
+#   overallAcc[c] = mean(cvAcc)
+#   print(paste("Finished running K =", k))
+# }
+# 
+# print(paste("K that gives the maximum CV accuracy:", choices_of_K[which.max(overallAcc)]))
+```
+
+
+```{r}
+# Takes a generic classifier, training features (whole training data frame), training labels,
+# number of folds K, and a loss function. Outputs the K-fold CV loss on the training set.
+
+CVgeneric = function(classifier, train_features, train_labels, K, lossfn) {
+  set.seed(1234)
+  all_names = colnames(train_features)
+  feature_names = all_names[all_names!="expert_label"]
+  folds <- createFolds(train_labels, k = K)
+  
+  # classification accuracy
+  cvAcc = rep(NA, K)
+  
+  for (i in 1:K) {
+    fold_ind = folds[[i]]
+    traindat = train_features[-fold_ind,]
+    traindat_actual = train_labels[-fold_ind]
+    valdat = train_features[fold_ind,]
+    valdat_actual = train_labels[fold_ind]
+  
+    form = paste(c("expert_label ~ ", paste(feature_names, collapse = " + ")), collapse = "")
+    pred_class = rep(0, nrow(valdat))
+    
+    if (classifier == "logistic regression") {
+      mod = glm(formula = form,  data = traindat, family = "binomial")
+      pred_prob = predict(mod, valdat, type = "response")
+      pred_class[pred_prob > 0.5] = 1
+    } else if (classifier == "lda") {
+      mod = lda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindat)
+      pred_class = predict(mod, valdat)$class
+    } else if (classifier == "qda") {
+      mod = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindat)
+      pred_class = predict(mod, valdat)$class
+    } else if (classifier == "knn") {
+      pred_class = knn(train = traindat[,feature_names], test = valdat[,feature_names], cl = traindat_actual, k = 11)
+    }
+    val_acc = lossfn(valdat_actual, pred_class)
+    cvAcc[i] = val_acc
+  }
+  
+  cvAcc = round(cvAcc * 100, 2)
+  tableAcc = data.frame("Folds" = 1:K, "Accuracy" = sapply(cvAcc, function(x) {paste(x,"%", sep = "")}))
+  print(tableAcc)
+  print(paste("Overall Accuracy: ", round(mean(cvAcc), 2), "%", sep = ""))
+  
+  # outputs the K-fold CV loss
+  Kfold_error = round(100 - mean(cvAcc), 2)
+  return(paste("K-fold CV loss: ", Kfold_error, "%", sep = ""))
+}
+
+# define a loss function that outputs accuracy
+Acc = function(actual, pred) {
+  return(mean(actual == pred))
+}
+```
+
+## 3.
+
+### (a)
+
+Try several classification methods and assess their fit using cross-validation (CV). Provide a commentary on the assumptions for the methods you tried and if they are satisfied in this case.
+
+```{r}
+# For both methods, merge training and validation sets with chosen features,
+# and changed expert labels to be 0 and 1
+CVtrainA = rbind(trainA, valA)
+levels(CVtrainA$expert_label) <- c(0, 1)
+feature_names = colnames(CVtrainA)[4:11]
+CVtrainA_features = CVtrainA[,c("expert_label", feature_names)] #no coords
+
+CVtrainB = rbind(trainB, valB)
+levels(CVtrainB$expert_label) <- c(0, 1)
+CVtrainB_features = CVtrainB[,c("expert_label", feature_names)]
+```
+
+In the following, we output the accuracy across each fold, the K-fold CV loss and the test accuracy.
+
+Classifier 1: Logistic Regression
+
+```{r}
+# logistic regression for METHOD A
+
+# 1. CV accuracies
+CVgeneric("logistic regression", CVtrainA_features, CVtrainA_features$expert_label, 5, Acc)
+```
+
+```{r}
+# 2. test accuracy
+levels(testA$expert_label) <- c(0, 1)
+
+traindatA = CVtrainA
+traindat_actualA = CVtrainA_features$expert_label
+testdatA = testA[,feature_names]
+testdat_actualA = testA$expert_label
+
+form = paste(c("expert_label ~ ", paste(feature_names, collapse = " + ")), collapse = "")
+pred_class = rep(0, nrow(testdatA))
+  
+mod = glm(formula = form,  data = traindatA, family = "binomial")
+pred_prob = predict(mod, testdatA, type = "response")
+pred_class[pred_prob > 0.5] = 1
+
+test_acc = Acc(testdat_actualA, pred_class)
+print(paste("Test Accuracy: ", round(test_acc * 100, 2), "%", sep = ""))
+
+# Derive ROC curve cutoff and performance
+# TPR = TP / (TP + FN), and we want FN to be small because we don't want to fail to detect cloudy regions,
+# so we need TPR to be large.
+
+pred = prediction(pred_prob, testdat_actualA)
+auc_logisticA = performance(pred, "auc")@y.values[[1]]
+perf_logisticA = performance(pred, "tpr", "fpr")
+
+
+cutoff_df <- data.frame("cutoff" = perf_logisticA@alpha.values[[1]],
+                        "tpr" = perf_logisticA@y.values[[1]],
+                        "fpr" = perf_logisticA@x.values[[1]])
+cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+
+x_logisticA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+y_logisticA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+```{r}
+# logistic regression for METHOD B
+CVgeneric("logistic regression", CVtrainB_features, CVtrainB_features$expert_label, 5, Acc)
+
+# 2. test accuracy
+levels(testB$expert_label) <- c(0, 1)
+
+traindatB = CVtrainB
+traindat_actualB = CVtrainB_features$expert_label
+testdatB = testB[,feature_names]
+testdat_actualB = testB$expert_label
+
+form = paste(c("expert_label ~ ", paste(feature_names, collapse = " + ")), collapse = "")
+pred_class = rep(0, nrow(testdatB))
+  
+mod = glm(formula = form,  data = traindatB, family = "binomial")
+pred_prob = predict(mod, testdatB, type = "response")
+pred_class[pred_prob > 0.5] = 1
+
+test_acc = Acc(testdat_actualB, pred_class)
+print(paste("Test Accuracy: ", round(test_acc * 100, 2), "%", sep = ""))
+
+# Derive ROC curve cutoff and performance
+
+pred = prediction(pred_prob, testdat_actualB)
+auc_logisticB = performance(pred, "auc")@y.values[[1]]
+perf_logisticB = performance(pred, "tpr", "fpr")
+
+cutoff_df <- data.frame("cutoff" = perf_logisticB@alpha.values[[1]],
+                        "tpr" = perf_logisticB@y.values[[1]],
+                        "fpr" = perf_logisticB@x.values[[1]])
+cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+
+x_logisticB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+y_logisticB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+
+```{r}
+
+#Equal variance to satisfy LDA assumption
+variables <- c("NDAI", "SD", "CORR", "AN")
+plot <- list()
+for(i in variables) {
+  plot[[i]] <- ggplot(CVtrainA, aes_string(x = "expert_label", y = i, col = "expert_label", fill = "expert_label")) +
+    geom_boxplot(alpha = 0.2) +
+    theme(legend.position = "none") +
+    scale_color_manual(values = c("blue", "red"))
+    scale_fill_manual(values = c("blue", "red"))
+}
+
+do.call(grid.arrange, c(plot, nrow = 1))
+```
+
+Classifier 2: LDA
+
+```{r}
+# lda for METHOD A
+
+# 1. CV accuracies
+CVgeneric("lda", CVtrainA_features, CVtrainA_features$expert_label, 5, Acc)
+
+# 2. test accuracy
+mod = lda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatA)
+pred_class = predict(mod, testdatA)$class
+
+test_acc = Acc(testdat_actualA, pred_class)
+print(paste("Test Accuracy: ", round(test_acc * 100, 2), "%", sep = ""))
+
+# Derive ROC curve cutoff and performance
+pred_prob = predict(mod, testdatA)$posterior[,2]
+pred = prediction(pred_prob, testdat_actualA)
+auc_ldaA = performance(pred, "auc")@y.values[[1]]
+perf_ldaA = performance(pred, "tpr", "fpr")
+
+cutoff_df <- data.frame("cutoff" = perf_ldaA@alpha.values[[1]],
+                        "tpr" = perf_ldaA@y.values[[1]],
+                        "fpr" = perf_ldaA@x.values[[1]])
+cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+
+x_ldaA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+y_ldaA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+```{r}
+# lda for METHOD B
+# 1. CV accuracies
+CVgeneric("lda", CVtrainB_features, CVtrainB_features$expert_label, 5, Acc)
+
+# 2. test accuracy
+mod = lda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatB)
+pred_class = predict(mod, testdatB)$class
+
+test_acc = Acc(testdat_actualB, pred_class)
+print(paste("Test Accuracy: ", round(test_acc * 100, 2), "%", sep = ""))
+
+# Derive ROC curve cutoff and performance
+pred_prob = predict(mod, testdatB)$posterior[,2]
+pred = prediction(pred_prob, testdat_actualB)
+auc_ldaB = performance(pred, "auc")@y.values[[1]]
+perf_ldaB = performance(pred, "tpr", "fpr")
+
+cutoff_df <- data.frame("cutoff" = perf_ldaB@alpha.values[[1]],
+                        "tpr" = perf_ldaB@y.values[[1]],
+                        "fpr" = perf_ldaB@x.values[[1]])
+cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+
+x_ldaB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+y_ldaB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+Classifier 3: QDA
+
+```{r}
+# qda for METHOD A
+# 1. CV accuracies
+CVgeneric("qda", CVtrainA_features, CVtrainA_features$expert_label, 5, Acc)
+
+# 2. test accuracy
+mod = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatA)
+pred_class = predict(mod, testdatA)$class
+
+test_acc = Acc(testdat_actualA, pred_class)
+print(paste("Test Accuracy: ", round(test_acc * 100, 2), "%", sep = ""))
+
+# Derive ROC curve cutoff and performance
+pred_prob = predict(mod, testdatA)$posterior[,2]
+pred = prediction(pred_prob, testdat_actualA)
+auc_qdaA = performance(pred, "auc")@y.values[[1]]
+perf_qdaA = performance(pred, "tpr", "fpr")
+
+cutoff_df <- data.frame("cutoff" = perf_qdaA@alpha.values[[1]],
+                        "tpr" = perf_qdaA@y.values[[1]],
+                        "fpr" = perf_qdaA@x.values[[1]])
+cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+
+x_qdaA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+y_qdaA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+
+```{r}
+# qda for METHOD B
+# 1. CV accuracies
+CVgeneric("qda", CVtrainB_features, CVtrainB_features$expert_label, 5, Acc)
+
+# 2. test accuracy
+mod = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatB)
+pred_class = predict(mod, testdatB)$class
+
+test_acc = Acc(testdat_actualB, pred_class)
+print(paste("Test Accuracy: ", round(test_acc * 100, 2), "%", sep = ""))
+
+# Derive ROC curve cutoff and performance
+pred_prob = predict(mod, testdatB)$posterior[,2]
+pred = prediction(pred_prob, testdat_actualB)
+auc_qdaB = performance(pred, "auc")@y.values[[1]]
+perf_qdaB = performance(pred, "tpr", "fpr")
+
+cutoff_df <- data.frame("cutoff" = perf_qdaB@alpha.values[[1]],
+                        "tpr" = perf_qdaB@y.values[[1]],
+                        "fpr" = perf_qdaB@x.values[[1]])
+cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+
+x_qdaB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+y_qdaB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+Classifier 4: KNN
+
+```{r}
+# # knn for METHOD A
+# # 1. CV accuracies
+# CVgeneric("knn", CVtrainA_features, CVtrainA_features$expert_label, 5, Acc)
+# 
+# # 2. test accuracy
+# pred_class = knn(train = traindatA[,feature_names], test = testdatA[,feature_names], cl = traindat_actualA, k = 11)
+# test_acc_knnA = Acc(testdat_actualA, pred_class)
+# print(paste("Test Accuracy: ", round(test_acc_knnA * 100, 2), "%", sep = ""))
+# 
+# # Derive ROC curve cutoff and performance
+# pred_knnA = knn(train = traindatA[,feature_names], test = testdatA[,feature_names], cl = traindat_actualA, k = 11, prob = TRUE)
+# pred_prob = attr(pred_knnA,"prob")
+# pred_prob[pred_knnA == 0] = 1 - pred_prob[pred_knnA == 0]
+# pred = prediction(pred_prob, testdat_actualA)
+# auc_knnA = performance(pred, "auc")@y.values[[1]]
+# perf_knnA = performance(pred, "tpr", "fpr")
+# 
+# cutoff_df <- data.frame("cutoff" = perf_knnA@alpha.values[[1]],
+#                         "tpr" = perf_knnA@y.values[[1]],
+#                         "fpr" = perf_knnA@x.values[[1]])
+# cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+# 
+# x_knnA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+# y_knnA = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+```{r}
+# # knn for METHOD B
+# # 1. CV accuracies
+# CVgeneric("knn", CVtrainB_features, CVtrainB_features$expert_label, 5, Acc)
+```
+
+```{r}
+# # 2. test accuracy
+# pred_class = knn(train = traindatB[,feature_names], test = testdatB[,feature_names], cl = traindat_actualB, k = 11)
+# test_acc_knnB = Acc(testdat_actualB, pred_class)
+# print(paste("Test Accuracy: ", round(test_acc_knnB * 100, 2), "%", sep = ""))
+# 
+# # Derive ROC curve cutoff and performance
+# pred_knnB = knn(train = traindatB[,feature_names], test = testdatB[,feature_names], cl = traindat_actualB, k = 11, prob = TRUE)
+# pred_prob = attr(pred_knnB,"prob")
+# pred_prob[pred_knnB == 0] = 1 - pred_prob[pred_knnB == 0]
+# pred = prediction(pred_prob, testdat_actualB)
+# auc_knnB = performance(pred, "auc")@y.values[[1]]
+# perf_knnB = performance(pred, "tpr", "fpr")
+# 
+# cutoff_df <- data.frame("cutoff" = perf_knnB@alpha.values[[1]],
+#                         "tpr" = perf_knnB@y.values[[1]],
+#                         "fpr" = perf_knnB@x.values[[1]])
+# cutoff_df <- cutoff_df[order(cutoff_df$fpr, decreasing = FALSE), ]
+# 
+# x_knnB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$fpr
+# y_knnB = cutoff_df[cutoff_df$tpr > 0.95, ][1,]$tpr
+```
+
+```{r}
+# Plot ROC curve for split method A
+plot(perf_logisticA, col = "purple", lwd = 1)
+text(0.95, 1, "Logistic", col = "purple")
+plot(perf_ldaA, col = "red", add = TRUE, lwd = 1)
+text(0.95, 0.95, "LDA", col = "red")
+plot(perf_qdaA, col = "green", add = TRUE, lwd = 1)
+text(1, 0.95, "QDA", col = "green")
+# plot(perf_knnA, col = "black", add = TRUE, lwd = 1)
+# text(0.85, 0.95, "KNN", col = "black")
+
+points(x_logisticA, y_logisticA, col = "purple", pch = 20)
+points(x_ldaA, y_ldaA, col = "red", pch = 20)
+points(x_qdaA, y_qdaA, col = "green", pch = 20)
+# points(x_knnA, y_knnA, col = "black", pch = 20)
+
+# Compare different classification methods using AUC for splitting method A
+data.frame("Classification_Method"= c("Logistic Regression", "LDA", "QDA", "KNN"),
+           "AUC"= c(auc_logisticA, auc_ldaA, auc_qdapoints(x_knnA, y_knnA, col = "black", pch = 20),A, auc_knnA))
+
+# QDA performs the best (Largest AUC)
+```
+
+```{r}
+# Plot ROC curve for split method B
+plot(perf_logisticB, col = "purple", lwd = 1)
+text(0.95, 1, "Logistic", col = "purple")
+plot(perf_ldaB, col = "red", add = TRUE, lwd = 1)
+text(0.93, 0.95, "LDA", col = "red")
+plot(perf_qdaB, col = "green", add = TRUE, lwd = 1)
+text(1, 0.95, "QDA", col = "green")
+# plot(perf_knnB, col = "black", add = TRUE, lwd = 1)
+# text(0.85, 0.95, "KNN", col = "black")
+
+points(x_logisticB, y_logisticB, col = "purple", pch = 20)
+points(x_ldaB, y_ldaB, col = "red", pch = 20)
+points(x_qdaB, y_qdaB, col = "green", pch = 20)
+# points(x_knnB, y_knnB, col = "black", pch = 20)
+
+# Compare different classification methods using AUC for splitting method B
+data.frame("Classification_Method"= c("Logistic Regression", "LDA", "QDA", "KNN"),
+           "AUC"= c(auc_logisticB, auc_ldaB, auc_qdaB, auc_knnB))
+
+# QDA performs the best (Largest AUC)
+```
+
+## 4. Diagnostics
+
+### (a)
+
+For splitting METHOD A:
+
+```{r}
+# qda for METHOD A
+
+# Plot mean NDAI of group 1 (cloudy) and group 0 (non-cloudy) against the proportion of training data used to train the model
+iter = 100
+meanNDAI_g0 = rep(NA, iter)
+meanNDAI_g1 = rep(NA, iter)
+meanCORR_g0 = rep(NA, iter)
+meanCORR_g1 = rep(NA, iter)
+meanAN_g0 = rep(NA, iter)
+meanAN_g1 = rep(NA, iter)
+meanSD_g0 = rep(NA, iter)
+meanSD_g1 = rep(NA, iter)
+meanAF_g0 = rep(NA, iter)
+meanAF_g1 = rep(NA, iter)
+props = seq(0.01, 1, length.out = 100)
+
+for (i in 1:length(props)) {
+  prop = props[i]
+  n = round(nrow(traindatA) * prop)
+  ind = sample(1:nrow(traindatA), size = n)
+  traindatA_subset = traindatA[ind,]
+  mod_qdaA_subset = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatA_subset)
+  meanNDAI_g0[i] = as.numeric(mod_qdaA_subset$means[,"NDAI"][1])
+  meanNDAI_g1[i] = as.numeric(mod_qdaA_subset$means[,"NDAI"][2])
+  meanCORR_g0[i] = as.numeric(mod_qdaA_subset$means[,"CORR"][1])
+  meanCORR_g1[i] = as.numeric(mod_qdaA_subset$means[,"CORR"][2])
+  meanAN_g0[i] = as.numeric(mod_qdaA_subset$means[,"AN"][1])
+  meanAN_g1[i] = as.numeric(mod_qdaA_subset$means[,"AN"][2])
+  meanSD_g0[i] = as.numeric(mod_qdaA_subset$means[,"SD"][1])
+  meanSD_g1[i] = as.numeric(mod_qdaA_subset$means[,"SD"][2])
+  meanAF_g0[i] = as.numeric(mod_qdaA_subset$means[,"AF"][1])
+  meanAF_g1[i] = as.numeric(mod_qdaA_subset$means[,"AF"][2])
+}
+converge = data.frame("props" = props,
+                      "meanNDAI_g0" = meanNDAI_g0,
+                      "meanNDAI_g1" = meanNDAI_g1,
+                      "meanCORR_g0" = meanCORR_g0,
+                      "meanCORR_g1" = meanCORR_g1,
+                      "meanAN_g0" = meanAN_g0,
+                      "meanAN_g1" = meanAN_g1,
+                      "meanSD_g0" = meanSD_g0,
+                      "meanSD_g1" = meanSD_g1,
+                      "meanAF_g0" = meanAF_g0,
+                      "meanAF_g1" = meanAF_g1)
+```
+
+```{r}
+ggplot(aes(x = props, y = meanNDAI_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean NDAI for group 0 (not cloudy)") +
+  ggtitle("mean NDAI of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanNDAI_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean NDAI for group 1 (cloudy)") +
+  ggtitle("mean NDAI of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanCORR_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean CORR for group 0 (not cloudy)") +
+  ggtitle("mean CORR of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanCORR_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean CORR for group 1 (cloudy)") +
+  ggtitle("mean CORR of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAN_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AN for group 0 (not cloudy)") +
+  ggtitle("mean AN of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAN_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AN for group 1 (cloudy)") +
+  ggtitle("mean AN of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanSD_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean SD for group 0 (not cloudy)") +
+  ggtitle("mean SD of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanSD_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean SD for group 1 (cloudy)") +
+  ggtitle("mean SD of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAF_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AF for group 0 (not cloudy)") +
+  ggtitle("mean AF of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAF_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AF for group 1 (cloudy)") +
+  ggtitle("mean AF of group 1 (cloudy) against the proportion of training data used")
+
+```
+
+For splitting METHOD B:
+
+```{r}
+# qda for METHOD B
+
+# Plot mean NDAI of group 1 (cloudy) and group 0 (non-cloudy) against the proportion of training data used to train the model
+iter = 100
+meanNDAI_g0 = rep(NA, iter)
+meanNDAI_g1 = rep(NA, iter)
+meanCORR_g0 = rep(NA, iter)
+meanCORR_g1 = rep(NA, iter)
+meanAN_g0 = rep(NA, iter)
+meanAN_g1 = rep(NA, iter)
+meanSD_g0 = rep(NA, iter)
+meanSD_g1 = rep(NA, iter)
+meanAF_g0 = rep(NA, iter)
+meanAF_g1 = rep(NA, iter)
+props = seq(0.01, 1, length.out = 100)
+
+for (i in 1:length(props)) {
+  prop = props[i]
+  n = round(nrow(traindatB) * prop)
+  ind = sample(1:nrow(traindatB), size = n)
+  traindatB_subset = traindatB[ind,]
+  mod_qdaB_subset = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatB_subset)
+  meanNDAI_g0[i] = as.numeric(mod_qdaB_subset$means[,"NDAI"][1])
+  meanNDAI_g1[i] = as.numeric(mod_qdaB_subset$means[,"NDAI"][2])
+  meanCORR_g0[i] = as.numeric(mod_qdaB_subset$means[,"CORR"][1])
+  meanCORR_g1[i] = as.numeric(mod_qdaB_subset$means[,"CORR"][2])
+  meanAN_g0[i] = as.numeric(mod_qdaB_subset$means[,"AN"][1])
+  meanAN_g1[i] = as.numeric(mod_qdaB_subset$means[,"AN"][2])
+  meanSD_g0[i] = as.numeric(mod_qdaB_subset$means[,"SD"][1])
+  meanSD_g1[i] = as.numeric(mod_qdaB_subset$means[,"SD"][2])
+  meanAF_g0[i] = as.numeric(mod_qdaB_subset$means[,"AF"][1])
+  meanAF_g1[i] = as.numeric(mod_qdaB_subset$means[,"AF"][2])
+}
+
+converge = data.frame("props" = props,
+                      "meanNDAI_g0" = meanNDAI_g0,
+                      "meanNDAI_g1" = meanNDAI_g1,
+                      "meanCORR_g0" = meanCORR_g0,
+                      "meanCORR_g1" = meanCORR_g1,
+                      "meanAN_g0" = meanAN_g0,
+                      "meanAN_g1" = meanAN_g1)
+```
+
+```{r}
+ggplot(aes(x = props, y = meanNDAI_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean NDAI for group 0 (not cloudy)") +
+  ggtitle("mean NDAI of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanNDAI_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean NDAI for group 1 (cloudy)") +
+  ggtitle("mean NDAI of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanCORR_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean CORR for group 0 (not cloudy)") +
+  ggtitle("mean CORR of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanCORR_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean CORR for group 1 (cloudy)") +
+  ggtitle("mean CORR of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAN_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AN for group 0 (not cloudy)") +
+  ggtitle("mean AN of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAN_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AN for group 1 (cloudy)") +
+  ggtitle("mean AN of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanSD_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean SD for group 0 (not cloudy)") +
+  ggtitle("mean SD of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanSD_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean SD for group 1 (cloudy)") +
+  ggtitle("mean SD of group 1 (cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAF_g0), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AF for group 0 (not cloudy)") +
+  ggtitle("mean AF of group 0 (not cloudy) against the proportion of training data used")
+
+ggplot(aes(x = props, y = meanAF_g1), data = converge) +
+  geom_line() +
+  xlab("proportion of training data used") +
+  ylab("mean AF for group 1 (cloudy)") +
+  ggtitle("mean AF of group 1 (cloudy) against the proportion of training data used")
+
+```
+
+### (b)
+
+```{r}
+# qda for METHOD A
+
+mod_qdaA = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatA)
+pred_class_qdaA = predict(mod_qdaA, testdatA)$class
+
+missed_testA_qdaA = testA[testdat_actualA != pred_class_qdaA, ]
+
+# SD, NDAI, CORR, AN, AF seems different
+summary(missed_testA_qdaA)
+summary(testA)
+
+# Most of the misclassified data are the cloudy regions
+ggplot(aes(x = x, y = y, color = expert_label), data = missed_testA_qdaA) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for Misclassified test data
+[expert label: 1 = cloud, 0 = not cloud]")
+
+ggplot(aes(x = x, y = y, color = expert_label), data = testA) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for test data
+[expert label: 1 = cloud, 0 = not cloud]")
+
+# Most of the misclassified data are the cloudy regions
+```
+
+```{r}
+# qda for METHOD B
+
+mod_qdaB = qda(expert_label ~ NDAI + SD + CORR + DF + CF + BF + AF + AN, data = traindatB)
+pred_class_qdaB = predict(mod_qdaB, testdatB)$class
+
+missed_testB_qdaB = testB[testdat_actualB != pred_class_qdaB, ]
+
+# SD, AN, NDAI seems different
+summary(missed_testB_qdaB) # higher
+summary(testB) # lower
+
+# Most of the misclassified data are the cloudy regions
+ggplot(aes(x = x, y = y, color = expert_label), data = missed_testB_qdaB) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for Misclassified test data
+[expert label: 1 = cloud, 0 = not cloud]")
+
+ggplot(aes(x = x, y = y, color = expert_label), data = testB) +
+  geom_point(size = 0.02) +
+  ggtitle("Expert Labels for test data
+[expert label: 1 = cloud, 0 = not cloud]")
+
+```
+
+### (c)
+
+```{r}
+# misclassified proportions look more normal now
+# qda for METHOD A (change features)
+mod_qdaA_better = qda(expert_label ~ NDAI + SD + CORR + AF + AN, data = traindatA)
+pred_class_qdaA_better = predict(mod_qdaA_better, testdatA)$class
+missed_testA_qdaA_better = testA[testdat_actualA != pred_class_qdaA_better, ]
+summary(missed_testA_qdaA_better)
+summary(missed_testA_qdaA)
+```
+
+```{r}
+# qda for METHOD B (change features)
+mod_qdaB_better = qda(expert_label ~ NDAI + SD + AN, data = traindatB)
+pred_class_qdaB_better = predict(mod_qdaB_better, testdatB)$class
+missed_testB_qdaB_better = testB[testdat_actualB != pred_class_qdaB_better, ]
+summary(missed_testB_qdaB_better)
+summary(missed_testB_qdaB)
+```
