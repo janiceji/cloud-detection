@@ -1,4 +1,4 @@
-# Cloud Detection 
+# ☁️ Cloud Detection ☁️
 
 #### Acknowledgements
 
@@ -54,18 +54,17 @@ To calculate the percent of pixels for the different classes, we divide the numb
 ![map3](https://github.com/janiceji/cloud-detection/blob/main/plots/labels_image3.png)
 
 ## Part 2: Preparation 
-The expert labels with 0 are taken out because they contain no information. We test two ways to split the data to account for dependencies and non iid values.
-The first splitting method involves dividing up the data into 20 blocks, selecting 70% for training and the other 30% for validation and testing. (Method A).
+The expert labels with 0 are taken out because they contain no information. We test two ways to split the data to account for 
+The first splitting method involves dividing up the data into 20 blocks to account for dependencies and non-iid among the different images, selecting 70% for training and the other 30% for validation and testing. (Method A).
 The second splitting method is to simply split it by image number, where image 1 is the training, image 2 is the validation, and image 3 is the test. (Method B)
 
 #### CVgeneric function 
-A function that allows the user to input one of the following classfiers: logistic regression, LDA, QDA, and KNN, and outputs the respective accuracies and K-fold cross validation loss.
+We chose some classification methods and created a function that allows the user to input one of the following classifiers: logistic regression, LDA, QDA, and KNN, which outputs the respective accuracies and K-fold cross validation loss.
 
 ## Part 3: Modeling
-After assessing the fit using cross validation, we apply the CVGeneric function on training sets A and B, rename the expert labels to 0 (non-cloudy) and 1 (cloudy), then proceed to model and predict accordingly. 
+After assessing the fit using cross validation, we apply the CVGeneric function on training sets A and B, rename the expert labels to 0 (non-cloudy) and 1 (cloudy), then proceed to model and predict accordingly.
 
-#### ROC Curve 
-Using ROC curve to assess the curve.
+#### ROC Curves
 ![roc1](https://github.com/janiceji/cloud-detection/blob/main/plots/roc.png)
 ![roc2](https://github.com/janiceji/cloud-detection/blob/main/plots/roc2.png)
 
@@ -73,4 +72,4 @@ Using ROC curve to assess the curve.
 Analyzed the proposed best model and examine the misclassification errors.
 
 #### Conclusion
-QDA was deemed the best classifier for unseen image pixels.
+QDA was deemed the best classifier among the ones selected for unseen image pixels.
