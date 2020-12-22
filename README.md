@@ -1,8 +1,8 @@
 # ☁️ Cloud Detection ☁️
 
-#### Acknowledgements
+## Acknowledgements
 
-UC Berkeley Statistic 154 (Modern Statistical Prediction and Machine Learning) Spring 2019 Project 2. Based on the paper [Daytime Arctic Cloud Detection Based on Multi-Angle Satellite Data with Case Studies by Yu et al. (2008)](https://github.com/janiceji/cloud-detection/blob/main/yu2008.pdf). The write-up was done by Janice Ji and YiNung Huang.
+UC Berkeley Statistic 154 (Modern Statistical Prediction and Machine Learning) Spring 2019 Project 2. Based on the paper [Daytime Arctic Cloud Detection Based on Multi-Angle Satellite Data with Case Studies by Yu et al. (2008)](https://github.com/janiceji/cloud-detection/blob/main/yu2008.pdf). The write-up was completed by Janice Ji and YiNung Huang.
 
 ## Report Table of Contents
 ```
